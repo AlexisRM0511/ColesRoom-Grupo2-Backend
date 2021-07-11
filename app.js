@@ -1,7 +1,4 @@
-// const http = require('http')
 const express = require('express')
-// const routes = require('./routes/index.js')
-// require('dotenv').config()
 
 const app = express()
 
@@ -9,20 +6,8 @@ const path = require('path')
 
 app.use(express.static(path.join(__dirname, '..','Frontend','public')))
 
-// app.use('/', routes);
-
-/*
-    @params
-    req: Solicitud al servidor, o sea, la URL
-    res: Lo que el servidor mostrará
-*/
-
-
-app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'))
-    next()
-})
-
+app.use(express.urlencoded({extended: true})); 
+app.use(express.json());
 
 const mongoose = require('mongoose')
 
@@ -36,57 +21,49 @@ db.once('open', _ => {
 })
 
 db.on('error', err => {
-    console.error('connection error:', err)
+    console.error('connection erro:', err)
 })
 
-const usersSchema = mongoose.Schema({
-    email: String,
-    name: String,
-    password: String
-})
-
-const usersModel = mongoose.model('users', usersSchema)
+const usersModel = require('./models/User.js') 
 
 const mostrar = async () => {
     const datitos = await usersModel.find()
     console.log(datitos)
 }
-mostrar()
 
-const crear = async () =>{
-    const user = new usersModel({
-        name:'Alexis',
-        email:'alex@rojas.com',
-        password:"alexiscrackx"
-    })
-    const result = await user.save()
-    console.log(result)
-}
+// mostrar()
 
-const actualizar = async (id) => {
-    const user = await usersModel.updateOne({_id: id}, {
-      $set: {
-        name: '',
-        email: '',
-        password: ''
-      }
-    }) 
-  }
- actualizar("60ea1bc3fbb0231cd0207e57")
+// const crear = async () =>{
+//     const user = new usersModel({
+//         name:'Alexis',
+//         email:'alex@rojas.com',
+//         password:"alexiscrackx"
+//     })
+//     const result = await user.save()
+//     console.log(result)
+// }
 
- const eliminar = async (id) => {
-    const user = await usersModel.deleteOne({_id: id})
-    console.log(user)
-  }
+// crear()
 
-eliminar("60ea1bc74ba8631174609e23")  
+// const actualizar = async (id) => {
+//     const user = await usersModel.updateOne({_id: id}, {
+//       $set: {
+//         name: '',
+//         email: '',
+//         password: ''
+//       }
+//     }) 
+//   }
+// actualizar("60ea1bc3fbb0231cd0207e57")
 
-app.get('/abc', async (req, res) => {
-    const aa = await mostrar()
-    console.log(aa)
-    res.json(aa)
-})
+//  const eliminar = async (id) => {
+//     const user = await usersModel.deleteOne({_id: id})
+//     console.log(user)
+//   }
 
+// eliminar("60ea1bc74ba8631174609e23")  
+
+app.use('/', require('./routes/UserRoute.js'))
 
 const PORT = 3000
 app.listen(PORT, () => {
