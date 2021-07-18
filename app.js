@@ -4,7 +4,7 @@ const app = express()
 
 const path = require('path')
 
-app.use(express.static(path.join(__dirname, '..','Frontend','public')))
+app.use(express.static(path.join(__dirname, '..','ColesRoom-Grupo2-Frontend','public')))
 
 app.use(express.urlencoded({extended: true})); 
 app.use(express.json());

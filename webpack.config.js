@@ -1,7 +1,7 @@
 module.exports = {
-  entry: '../Frontend/src/index.js',
+  entry: '../ColesRoom-Grupo2-Frontend/src/index.js',
   output: {
-    path: __dirname + '../../Frontend/public/js',
+    path: __dirname + '../../ColesRoom-Grupo2-Frontend/public/js',
     filename: 'bundle.js'
   },
   module: {
