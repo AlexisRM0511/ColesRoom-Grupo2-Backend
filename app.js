@@ -64,8 +64,8 @@ const mostrar = async () => {
 
 // eliminar("60ea1bc74ba8631174609e23")  
 
-app.use('/', require('./routes/UserRoute.js', './routes/CourseRoute.js'))
-
+app.use('/', require('./routes/UserRoute.js'))
+app.use('/', require('./routes/CourseRoute.js'))
 const PORT = 3000
 app.listen(PORT, () => {
     console.log(`localhost:${PORT}`)
