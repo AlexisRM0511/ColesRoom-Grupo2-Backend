@@ -4,15 +4,15 @@ const courseModel = require('../models/Course.js')
 const bcrypt = require('bcrypt'); //Usar despues para encriptar passwords
 const { response } = require('express');
 
-router.post('/createCourse', async (req, res) =>{
-    const { name, category, description } = req.body;
+router.post('/CreateCourse', async (req, res) =>{
+    const { name, category, description, userid } = req.body;
     const course = new courseModel({
         name,
         category,
-        description
+        description,
+        userid
     })
-    let idCourse = ''
-    await course.save().then(u => idCourse = u.id);        
+    await course.save();        
     
-    res.json({ status: 'ok', id: idCourse })
+    res.json({ status: 'ok'})
 });
