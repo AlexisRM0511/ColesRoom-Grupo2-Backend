@@ -4,36 +4,33 @@ const bcrypt = require('bcrypt'); //Usar despues para encriptar passwords
 const { response } = require('express');
 const publicationsModel = require('../models/Publication.js');
 
-router.post('/register', async (req, res) => {
-    console.log(req.body)
-    const { name, surname, email, password } = req.body;
+router.post('/api/publications', async (req, res) => {
+    const { content, type, route, course_id } = req.body;
+    const publi = new publicationsModel({
+        course_id,
+        type,
+        content,        
+        route       
+    });
     
-    const emailExists = await userModel.findOne({ email })
-    if (emailExists) {
-        res.status(404).json({ error: 'auth/email-already-exists' })
-    }
-    else {
-        const user = new usersModel({
-            name,
-            email,
-            surname,
-            password
-        })
-        let idUser = ''
-        await user.save().then(u => idUser = u._id);        
-        
-        res.json({ status: 'ok', id: idUser })       
-    }
+    await publi.save()
 
-
-    // user.save()
-    //     .then(data => {
-    //         res.json(data)
-    //     })
-    //     .catch(err => {
-    //         res.json(err)
-    //     })
-
+    res.json({ status: 'ok'})
 });
+
+router.post('/editPubli', async (req, res) => {
+});
+
+router.post('/deletePubli', async (req, res) => {
+});
+
+router.get('/api/publications/:id', async (req, res) => {    
+    let id = req.params.id;
+    let publications = await publicationsModel.findById(id);
+    res.json({status: 'ok', publications: publications});
+});
+
+
+
 
 module.exports = router;
