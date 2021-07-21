@@ -5,7 +5,8 @@ const { response } = require('express');
 const publicationsModel = require('../models/Publication.js');
 
 router.post('/api/publications', async (req, res) => {    
-    const { content, type, route, course_id } = req.body;
+    const publication = req.body;
+    const { content, type, route, course_id } = publication;
     const publi = new publicationsModel({
         course_id,
         type,
@@ -13,9 +14,9 @@ router.post('/api/publications', async (req, res) => {
         route       
     });
     
-    await publi.save()
+    await publi.save().then(p => publication._id = p._id)
 
-    res.json({ status: 'ok'})
+    res.json(publication)
 });
 
 router.put('/api/publications/:id', async (req, res) => {
