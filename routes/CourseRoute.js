@@ -1,24 +1,48 @@
 const express = require('express');
 const router = express.Router();
+
+//imports Models
 const coursesModel = require('../models/Course.js')
 const userModel = require('../models/User.js')
-const bcrypt = require('bcrypt'); //Usar despues para encriptar passwords
-const { response } = require('express');
 
+
+//Get All Courses
+router.get('/courses', async (req, res) => {
+    const courses = await coursesModel.find();
+    res.json(courses)
+});
+
+// GET Course
+router.get('/:id', async (req, res) => {
+    const course = await coursesModel.findById(req.params.id);
+    res.json(course);
+  });
+
+//CREATE Course  
 router.post('/CreateCourse', async (req, res) => {
     const { name, category, description, user_id } = req.body;
-    const course = new coursesModel({
-        name,
-        category,
-        description,
-        user_id
-    })
-    console.log(user_id)
-    
-    let course_id = ""
-    await course.save().then(u => course_id = u._id);
+    const course = new coursesModel({ name, category, description, user_id })
+    await course.save().then(u => course_id = u._id)
+    res.json({ status: 'Curso Creado!' })
+});
 
-    /*const teacher_id = course.user_id
+// UPDATE Course
+router.put('/:id', async (req, res) => {
+    const { title, description } = req.body;
+    const newCourse = { title, description };
+    await coursesModel.findByIdAndUpdate(req.params.id, newCourse);
+    res.json({ status: 'Curso Actualizado!' });
+});
+
+// DELETE Course
+router.delete('/:id', async (req, res) => {
+    await coursesModel.findByIdAndRemove(req.params.id);
+    res.json({ status: 'Curso Eliminado!' });
+});
+
+module.exports = router;
+
+/*const teacher_id = course.user_id
     userModel.updateOne({ _id: teacher_id }, {
         $set: {
             coursescreated: [course_id]
@@ -34,10 +58,7 @@ router.post('/CreateCourse', async (req, res) => {
             res.json({
                 resultado: true,
                 info: info,
-                
+
             })
         }
     })*/
-    res.json({ status: 'ok' })
-});
-module.exports = router;
