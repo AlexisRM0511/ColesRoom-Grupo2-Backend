@@ -18,16 +18,30 @@ router.post('/api/publications', async (req, res) => {
     res.json({ status: 'ok'})
 });
 
-router.post('/editPubli', async (req, res) => {
+router.put('/api/publications/:id', async (req, res) => {
+    const { id } = req.params;    
+    const { content, files } = req.body;    
+    const publi = await publicationsModel.findByIdAndUpdate(id, {
+        $set: {
+            content,
+            route: files,
+        }
+    });
+    res.json(publi);
 });
 
-router.post('/deletePubli', async (req, res) => {
+router.delete('/api/publications/:id', async (req, res) => {
+
+    const { id } = req.params;
+    const publi = await publicationsModel.findByIdAndRemove(id);
+    console.log(publi)
+    res.json(publi);
 });
 
-router.get('/api/publications/:id', async (req, res) => {    
-    let id = req.params.id;
+router.get('/api/publications/:idcourse', async (req, res) => {    
+    let id = req.params.idcourse;
     let publications = await publicationsModel.find( {course_id: id} );
-    res.json({status: 'ok', publications: publications});
+    res.json(publications);
 });
 
 
