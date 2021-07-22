@@ -1,35 +1,40 @@
 const express = require('express')
+const morgan = require('morgan');
+const path = require('path')
 
 const app = express()
 
-const path = require('path')
+// Db connection
+const { mongoose } = require('./database');
 
-app.use(express.static(path.join(__dirname, '..','ColesRoom-Grupo2-Frontend','public')))
-
-app.use(express.urlencoded({extended: true})); 
+// Middlewares
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 app.use(express.json());
 
-const mongoose = require('mongoose')
+// Settings 
+app.set('port', process.env.PORT || 3000);
 
-const url = 'mongodb://localhost:27017/colesroomdb'
-mongoose.connect(url, { useNewUrlParser: true })
+// Static Files
+app.use(express.static(path.join(__dirname, '..', 'ColesRoom-Grupo2-Frontend', 'public')))
 
-const db = mongoose.connection
+// Routes
+app.use('/', require('./routes/UserRoute.js'))
+app.use('/', require('./routes/CourseRoute.js'))
 
-db.once('open', _ => {
-    console.log('Database connected:', url)
-})
+// Starting the server
+app.listen(app.get('port'), () => {
+    console.log(`La BD esta en el puerto: ${app.get('port')}`);
+});
 
-db.on('error', err => {
-    console.error('connection erro:', err)
-})
 
-const usersModel = require('./models/User.js') 
+//const usersModel = require('./models/User.js')
+//const coursesModel = require('./models/Course.js')
 
-const mostrar = async () => {
-    const datitos = await usersModel.find()
-    console.log(datitos)
-}
+//const mostrar = async () => {
+    //const datitos = await usersModel.find()
+    //console.log(datitos)
+//}
 
 // mostrar()
 
@@ -60,13 +65,4 @@ const mostrar = async () => {
 //     const user = await usersModel.deleteOne({_id: id})
 //     console.log(user)
 //   }
-
-// eliminar("60ea1bc74ba8631174609e23")  
-
-app.use('/', require('./routes/UserRoute.js'))
-app.use('/', require('./routes/PublicationRoute.js'))
-
-const PORT = 3000
-app.listen(PORT, () => {
-    console.log(`localhost:${PORT}`)
-})
+// eliminar("60ea1bc74ba8631174609e23") 
