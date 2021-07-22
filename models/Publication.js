@@ -3,11 +3,11 @@ const mongoose = require('mongoose')
 
 const publicationSchema = mongoose.Schema({
     course_id: String,
-    type: Int32Array,
+    type: Number,
     content: String,
     route: { type: Array, default: [] },
 })
 
-const usersModel = mongoose.model('publications', usersSchema)
+const publicationModel = mongoose.model('publications', publicationSchema)
 
-module.exports = usersModel
+module.exports = publicationModel

@@ -65,5 +65,4 @@ app.listen(app.get('port'), () => {
 //     const user = await usersModel.deleteOne({_id: id})
 //     console.log(user)
 //   }
-
 // eliminar("60ea1bc74ba8631174609e23") 
