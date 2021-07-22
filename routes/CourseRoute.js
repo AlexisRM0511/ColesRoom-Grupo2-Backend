@@ -13,7 +13,7 @@ router.get('/courses', async (req, res) => {
 });
 
 // GET Course
-router.get('/:id', async (req, res) => {
+router.get('/courses/:id', async (req, res) => {
     const course = await coursesModel.findById(req.params.id);
     res.json(course);
   });
@@ -27,7 +27,7 @@ router.post('/CreateCourse', async (req, res) => {
 });
 
 // UPDATE Course
-router.put('/:id', async (req, res) => {
+router.put('/courses/:id', async (req, res) => {
     const { title, description } = req.body;
     const newCourse = { title, description };
     await coursesModel.findByIdAndUpdate(req.params.id, newCourse);
@@ -35,7 +35,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE Course
-router.delete('/:id', async (req, res) => {
+router.delete('/courses/:id', async (req, res) => {
     await coursesModel.findByIdAndRemove(req.params.id);
     res.json({ status: 'Curso Eliminado!' });
 });
