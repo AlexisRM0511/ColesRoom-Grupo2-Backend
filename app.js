@@ -20,11 +20,12 @@ app.use(express.static(path.join(__dirname, '..', 'ColesRoom-Grupo2-Frontend', '
 
 // Routes
 app.use('/', require('./routes/UserRoute.js'))
+app.use('/', require('./routes/PublicationRoute.js'))
 app.use('/', require('./routes/CourseRoute.js'))
 
 // Starting the server
 app.listen(app.get('port'), () => {
-    console.log(`La BD esta en el puerto: ${app.get('port')}`);
+    console.log(`Localhost: ${app.get('port')}`);
 });
 
 

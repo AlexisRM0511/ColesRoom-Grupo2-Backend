@@ -3,8 +3,6 @@ const router = express.Router();
 
 //imports Models
 const coursesModel = require('../models/Course.js')
-const userModel = require('../models/User.js')
-
 
 //Get All Courses
 router.get('/courses', async (req, res) => {

@@ -45,7 +45,4 @@ router.get('/api/publications/:idcourse', async (req, res) => {
     res.json(publications);
 });
 
-
-
-
 module.exports = router;
