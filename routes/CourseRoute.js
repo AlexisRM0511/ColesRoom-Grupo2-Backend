@@ -5,19 +5,19 @@ const router = express.Router();
 const coursesModel = require('../models/Course.js')
 
 //Get All Courses
-router.get('/courses', async (req, res) => {
+router.get('/api/courses', async (req, res) => {
     const courses = await coursesModel.find();
     res.json(courses)
 });
 
 // GET Course
-router.get('/courses/:id', async (req, res) => {
+router.get('/api/courses/:id', async (req, res) => {
     const course = await coursesModel.findById(req.params.id);
     res.json(course);
   });
 
 //CREATE Course  
-router.post('/CreateCourse', async (req, res) => {
+router.post('/api/CreateCourse', async (req, res) => {
     const { name, category, description, user_id } = req.body;
     const course = new coursesModel({ name, category, description, user_id })
     await course.save().then(u => course_id = u._id)
@@ -25,7 +25,7 @@ router.post('/CreateCourse', async (req, res) => {
 });
 
 // UPDATE Course
-router.put('/courses/:id', async (req, res) => {
+router.put('/api/courses/:id', async (req, res) => {
     const { title, description } = req.body;
     const newCourse = { title, description };
     await coursesModel.findByIdAndUpdate(req.params.id, newCourse);
@@ -33,10 +33,11 @@ router.put('/courses/:id', async (req, res) => {
 });
 
 // DELETE Course
-router.delete('/courses/:id', async (req, res) => {
+router.delete('/api/courses/:id', async (req, res) => {
     await coursesModel.findByIdAndRemove(req.params.id);
     res.json({ status: 'Curso Eliminado!' });
 });
+
 
 module.exports = router;
 

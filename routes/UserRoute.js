@@ -48,4 +48,11 @@ router.post('/register', async (req, res) => {
     }
 });
 
+router.get('/teacher/:id', async (req, res) => {
+    console.log(req.params.id)
+    const teacher = await userModel.findById(req.params.id);
+    console.log(teacher)
+    res.json(teacher);
+});
+
 module.exports = router;
