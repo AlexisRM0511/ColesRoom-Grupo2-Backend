@@ -30,9 +30,6 @@ router.post('/editTasks', async (req, res) => {
 router.post('/deleteTasks', async (req, res) => {
     const  {_id} = req.body;
     const user = await tasksModel.deleteOne({_id: id})
-    console.log(user)
-
-
 });
 
 module.exports = router;

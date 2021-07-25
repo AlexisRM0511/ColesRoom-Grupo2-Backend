@@ -26,8 +26,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/register', async (req, res) => {
-    console.log(req.body)
+router.post('/register', async (req, res) => {  
     const { name, surname, email, password } = req.body;
     
     const emailExists = await userModel.findOne({ email })
@@ -48,10 +47,8 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.get('/teacher/:id', async (req, res) => {
-    console.log(req.params.id)
-    const teacher = await userModel.findById(req.params.id);
-    console.log(teacher)
+router.get('/teacher/:id', async (req, res) => {   
+    const teacher = await userModel.findById(req.params.id);   
     res.json(teacher);
 });
 

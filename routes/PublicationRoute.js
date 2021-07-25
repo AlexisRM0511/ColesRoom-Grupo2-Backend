@@ -34,8 +34,7 @@ router.put('/api/publications/:id', async (req, res) => {
 router.delete('/api/publications/:id', async (req, res) => {
 
     const { id } = req.params;
-    const publi = await publicationsModel.findByIdAndRemove(id);
-    console.log(publi)
+    const publi = await publicationsModel.findByIdAndRemove(id);    
     res.json(publi);
 });
 
