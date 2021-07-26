@@ -5,37 +5,48 @@ const { unlink } = require('fs-extra');
 const router = Router();
 
 // Models
-const File = require('../models/File');
+const FileModel = require('../models/File');
 
-router.get('/', async (req, res) => {
-    const files = await File.find();
-    res.render('index', { files });
+router.post('/upload', async (req, res) => {   
+    const { name, size, type} = req.body;
+    const fileModel = new FileModel({
+        filename: name,
+        path: '/uploads/' + name,
+        originalname: name,
+        mimetype: type,
+        size: size,        
+    });      
+    
+    let id = ''
+    await fileModel.save().then(file => id = file._id);
+    res.json({file: fileModel, fileID: id})
 });
 
-router.post('/upload', async (req, res) => {
-    const file = new File();
-    file.title = req.body.title;
-    file.description = req.body.description;
-    file.filename = req.file.filename;
-    file.path = '/uploads/' + req.file.filename;
-    file.originalname = req.file.originalname;
-    file.mimetype = req.file.mimetype;
-    file.size = req.file.size;
+router.post('/file', async (req, res) => {
+    const { files } = req.body;   
 
-    await file.save();
-    res.json({status: 'ok'})
+    const filesData = await FileModel.find({ _id: { $in: files } });;
+    res.json(filesData);
 });
 
 router.get('/file/:id', async (req, res) => {
     const { id } = req.params;
-    const file = await File.findById(id);
+    const file = await FileModel.findById(id);
     res.json(file);
 });
 
-router.get('/file/:id/delete', async (req, res) => {
+router.delete('/file/:id/delete', async (req, res) => {
     const { id } = req.params;
-    const fileDeleted = await File.findByIdAndDelete(id);
-    await unlink(path.resolve('./src/public' + fileDeleted.path));
+    console.log(id)
+    const fileDeleted = await FileModel.findByIdAndDelete(id);
+    //await unlink(path.resolve('./src/public' + fileDeleted.path));
+    res.json({status: 'ok'})
+});
+
+router.delete('/file/deleteAll', async (req, res) => {
+    const { filesIds } = req.body;
+    const filesDeleted = await FileModel.deleteMany({_id: { $in: filesIds }});
+    //await unlink(path.resolve('./src/public' + fileDeleted.path));
     res.json({status: 'ok'})
 });
 

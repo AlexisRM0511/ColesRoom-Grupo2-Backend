@@ -52,6 +52,7 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/UserRoute.js'))
 app.use('/', require('./routes/PublicationRoute.js'))
 app.use('/', require('./routes/CourseRoute.js'))
+app.use('/', require('./routes/FilesRoute.js'))
 
 // Starting the server
 app.listen(app.get('port'), () => {
