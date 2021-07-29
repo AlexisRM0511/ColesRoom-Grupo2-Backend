@@ -3,6 +3,9 @@ const router = express.Router();
 
 //imports Models
 const coursesModel = require('../models/Course.js')
+const publicationModel = require('../models/Publication.js')
+const taskModel = require('../models/Tasks.js')
+const fileModel = require('../models/File.js')
 
 //Get All Courses
 router.get('/api/courses', async (req, res) => {
@@ -44,7 +47,11 @@ router.put('/api/courses/:id', async (req, res) => {
 // DELETE Course
 router.delete('/api/courses/:id', async (req, res) => {
     await coursesModel.findByIdAndRemove(req.params.id);
-    res.json({ status: 'Curso Eliminado!' });
+    const deletedPublications = await publicationModel.find({ course_id: req.params.id });
+   await publicationModel.deleteMany({ course_id: req.params.id });
+    //await taskModel.deleteMany({ course_id: req.params.id });
+    console.log(deletedPublications);
+    res.json(deletedPublications);
 });
 
 
