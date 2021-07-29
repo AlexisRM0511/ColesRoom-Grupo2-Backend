@@ -35,7 +35,7 @@ router.get('/api/courses/created/:id', async (req, res) =>{
 //GET My Courses
 router.get('/api/courses/join/:id', async (req, res) =>{
     const user = await userModel.findById(req.params.id)
-    let coursesList
+    let coursesList= []
     for (const courseID of user.mycourses) {
         const course = await coursesModel.findById(courseID)
         coursesList.push(course)
@@ -46,7 +46,7 @@ router.get('/api/courses/join/:id', async (req, res) =>{
 //Join Course
 router.post('/api/join', async (req, res) => {
     const { userID, courseID} = req.body;
-    let newMyCourses
+    let newMyCourses= []
     await userModel.findById(userID).then(u => {
         newMyCourses = u.mycourses
         newMyCourses.push(courseID)
@@ -67,7 +67,7 @@ router.post('/api/CreateCourse', async (req, res) => {
     let rdmImg = Math.floor(Math.random() * 3) + 1;
     rdmImg = 'f' + rdmImg;
     const course = new coursesModel({ name, category, description, user_id, image : rdmImg })
-    let newCoursesCreated
+    let newCoursesCreated= []
     let courseID
     await course.save().then(async c => courseID=c._id)
     await userModel.findById(course.user_id).then(u => {
@@ -99,9 +99,36 @@ router.put('/api/courses/:id', async (req, res) => {
 
 // DELETE Course
 router.delete('/api/courses/:id', async (req, res) => {
+    const course= await coursesModel.findById(req.params.id)
+    let newCoursesCreated = []
+    await userModel.findById(course.user_id).then(u => {
+        newCoursesCreated = u.coursecreated
+        var i = newCoursesCreated.indexOf(req.params.id)
+        if(i!==-1){
+            newCoursesCreated.splice(i,1);
+        }
+    })
+    await userModel.findByIdAndUpdate( course.user_id, {
+        $set: {
+            coursecreated:newCoursesCreated  
+        }
+    })
+    let newMyCourses = []
+    const users = await userModel.find();
+    for (const user of users) {
+        var i = user.mycourses.indexOf(req.params.id)
+        if(i!==-1){
+            newMyCourses.splice(i,1);
+        }
+        await userModel.findByIdAndUpdate( user._id, {
+            $set: {
+                mycourses:newMyCourses
+            }
+        })
+    }   
     await coursesModel.findByIdAndRemove(req.params.id);
     const deletedPublications = await publicationModel.find({ course_id: req.params.id });
-   await publicationModel.deleteMany({ course_id: req.params.id });
+    await publicationModel.deleteMany({ course_id: req.params.id });
     //await taskModel.deleteMany({ course_id: req.params.id });
     console.log(deletedPublications);
     res.json(deletedPublications);
