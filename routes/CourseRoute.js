@@ -4,6 +4,10 @@ const router = express.Router();
 //imports Models
 const coursesModel = require('../models/Course.js')
 const userModel = require('../models/User.js')
+const publicationModel = require('../models/Publication.js')
+const taskModel = require('../models/Tasks.js')
+const fileModel = require('../models/File.js')
+
 
 //Get All Courses
 router.get('/api/courses', async (req, res) => {
@@ -60,7 +64,9 @@ router.post('/api/join', async (req, res) => {
 //CREATE Course  
 router.post('/api/CreateCourse', async (req, res) => {
     const { name, category, description, user_id } = req.body;
-    const course = new coursesModel({ name, category, description, user_id })
+    let rdmImg = Math.floor(Math.random() * 3) + 1;
+    rdmImg = 'f' + rdmImg;
+    const course = new coursesModel({ name, category, description, user_id, image : rdmImg })
     let newCoursesCreated
     let courseID
     await course.save().then(async c => courseID=c._id)
@@ -78,16 +84,27 @@ router.post('/api/CreateCourse', async (req, res) => {
 
 // UPDATE Course
 router.put('/api/courses/:id', async (req, res) => {
-    const { title, description } = req.body;
-    const newCourse = { title, description };
-    await coursesModel.findByIdAndUpdate(req.params.id, newCourse);
-    res.json({ status: 'Curso Actualizado!' });
+    const { name, description, image, category } = req.body;    
+    const c = await coursesModel.findByIdAndUpdate(req.params.id, { 
+        $set: { 
+            name, 
+            category,                
+            description, 
+            image,             
+        }
+    });       
+   
+    res.json(c);
 });
 
 // DELETE Course
 router.delete('/api/courses/:id', async (req, res) => {
     await coursesModel.findByIdAndRemove(req.params.id);
-    res.json({ status: 'Curso Eliminado!' });
+    const deletedPublications = await publicationModel.find({ course_id: req.params.id });
+   await publicationModel.deleteMany({ course_id: req.params.id });
+    //await taskModel.deleteMany({ course_id: req.params.id });
+    console.log(deletedPublications);
+    res.json(deletedPublications);
 });
 
 
