@@ -52,4 +52,5 @@ router.get('/teacher/:id', async (req, res) => {
     res.json(teacher);
 });
 
+
 module.exports = router;

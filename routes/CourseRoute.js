@@ -17,6 +17,46 @@ router.get('/api/courses/:id', async (req, res) => {
     res.json(course);
 });
 
+//GET Courses Created
+router.get('/api/courses/created/:id', async (req, res) =>{
+    const user = await userModel.findById(req.params.id)
+    var coursesList = []
+    for (const courseID of user.coursecreated) {
+        const course = await coursesModel.findById(courseID)
+        coursesList.push(course)
+    }
+    res.json(coursesList)
+});
+
+//GET My Courses
+router.get('/api/courses/join/:id', async (req, res) =>{
+    const user = await userModel.findById(req.params.id)
+    let coursesList
+    for (const courseID of user.mycourses) {
+        const course = await coursesModel.findById(courseID)
+        coursesList.push(course)
+    }
+    res.json(coursesList)
+});
+
+//Join Course
+router.post('/api/join', async (req, res) => {
+    const { userID, courseID} = req.body;
+    let newMyCourses
+    await userModel.findById(userID).then(u => {
+        newMyCourses = u.mycourses
+        newMyCourses.push(courseID)
+    })
+    await userModel.findByIdAndUpdate( userID, {
+        $set: {
+            mycourses:newMyCourses
+        }
+    })
+    res.json({ status: 'Se unio!' })
+
+});
+
+
 //CREATE Course  
 router.post('/api/CreateCourse', async (req, res) => {
     const { name, category, description, user_id } = req.body;
@@ -27,9 +67,7 @@ router.post('/api/CreateCourse', async (req, res) => {
     await userModel.findById(course.user_id).then(u => {
         newCoursesCreated = u.coursecreated
         newCoursesCreated.push(courseID)
-        console.log(newCoursesCreated+", "+courseID)
     })
-    console.log(course.user_id)
     await userModel.findByIdAndUpdate( course.user_id, {
         $set: {
             coursecreated:newCoursesCreated
