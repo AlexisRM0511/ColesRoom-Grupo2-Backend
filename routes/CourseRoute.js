@@ -19,17 +19,26 @@ router.get('/api/courses/:id', async (req, res) => {
 //CREATE Course  
 router.post('/api/CreateCourse', async (req, res) => {
     const { name, category, description, user_id } = req.body;
-    const course = new coursesModel({ name, category, description, user_id })
+    let rdmImg = Math.floor(Math.random() * 3) + 1;
+    rdmImg = 'f' + rdmImg;
+    const course = new coursesModel({ name, category, description, user_id, image : rdmImg })
     await course.save().then(u => course_id = u._id)
     res.json({ status: 'Curso Creado!' })
 });
 
 // UPDATE Course
 router.put('/api/courses/:id', async (req, res) => {
-    const { title, description } = req.body;
-    const newCourse = { title, description };
-    await coursesModel.findByIdAndUpdate(req.params.id, newCourse);
-    res.json({ status: 'Curso Actualizado!' });
+    const { name, description, image, category } = req.body;    
+    const c = await coursesModel.findByIdAndUpdate(req.params.id, { 
+        $set: { 
+            name, 
+            category,                
+            description, 
+            image,             
+        }
+    });       
+   
+    res.json(c);
 });
 
 // DELETE Course
