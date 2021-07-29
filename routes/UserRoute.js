@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const userModel = require('../models/User.js')
+
 const bcrypt = require('bcrypt'); //Usar despues para encriptar passwords
 const { response } = require('express');
-const usersModel = require('../models/User.js');
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -26,8 +26,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/register', async (req, res) => {
-    console.log(req.body)
+router.post('/register', async (req, res) => {  
     const { name, surname, email, password } = req.body;
     
     const emailExists = await userModel.findOne({ email })
@@ -35,7 +34,7 @@ router.post('/register', async (req, res) => {
         res.status(404).json({ error: 'auth/email-already-exists' })
     }
     else {
-        const user = new usersModel({
+        const user = new userModel({
             name,
             email,
             surname,
@@ -46,16 +45,11 @@ router.post('/register', async (req, res) => {
         
         res.json({ status: 'ok', id: idUser })       
     }
+});
 
-
-    // user.save()
-    //     .then(data => {
-    //         res.json(data)
-    //     })
-    //     .catch(err => {
-    //         res.json(err)
-    //     })
-
+router.get('/teacher/:id', async (req, res) => {   
+    const teacher = await userModel.findById(req.params.id);   
+    res.json(teacher);
 });
 
 module.exports = router;

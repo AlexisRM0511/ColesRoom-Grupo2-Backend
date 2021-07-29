@@ -1,71 +1,61 @@
 const express = require('express')
-
-const app = express()
-
+const morgan = require('morgan');
 const path = require('path')
 
-app.use(express.static(path.join(__dirname, '..','ColesRoom-Grupo2-Frontend','public')))
+const app = express()
+const multer = require('multer');
+const uuid = require('uuid');
+const { format } = require('timeago.js');
 
-app.use(express.urlencoded({extended: true})); 
+const mongoose = require('mongoose');
+
+const usuario = "prueba_prueba"
+const password = "prueba_prueba"
+const dbName = "test"
+// Db connection
+const uri = `mongodb+srv://prueba_prueba:${password}@clustercolesroom.owdjh.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(()=> console.log('conectado a mongodb')) 
+  .catch(e => console.log('error de conexión', e))
+
+
+
+
+// Middlewares
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 app.use(express.json());
 
-const mongoose = require('mongoose')
+// Settings 
+app.set('port', process.env.PORT || 3000);
 
-const url = 'mongodb://localhost:27017/colesroomdb'
-mongoose.connect(url, { useNewUrlParser: true })
+// Static Files
+app.use(express.static(path.join(__dirname, '..', 'ColesRoom-Grupo2-Frontend', 'public')))
 
-const db = mongoose.connection
+app.use(express.urlencoded({extended: false}));
+const storage = multer.diskStorage({
+    destination: path.join(__dirname, 'files/uploads'),
+    filename: (req, file, cb, filename) => {
+        console.log(file);
+        cb(null, uuid() + path.extname(file.originalname));
+    }
+}) 
+app.use(multer({storage}).single('image'));
 
-db.once('open', _ => {
-    console.log('Database connected:', url)
-})
+// Global variables
+app.use((req, res, next) => {
+    app.locals.format = format;
+    next();
+});
 
-db.on('error', err => {
-    console.error('connection erro:', err)
-})
-
-const usersModel = require('./models/User.js') 
-
-const mostrar = async () => {
-    const datitos = await usersModel.find()
-    console.log(datitos)
-}
-
-// mostrar()
-
-// const crear = async () =>{
-//     const user = new usersModel({
-//         name:'Alexis',
-//         email:'alex@rojas.com',
-//         password:"alexiscrackx"
-//     })
-//     const result = await user.save()
-//     console.log(result)
-// }
-
-// crear()
-
-// const actualizar = async (id) => {
-//     const user = await usersModel.updateOne({_id: id}, {
-//       $set: {
-//         name: '',
-//         email: '',
-//         password: ''
-//       }
-//     }) 
-//   }
-// actualizar("60ea1bc3fbb0231cd0207e57")
-
-//  const eliminar = async (id) => {
-//     const user = await usersModel.deleteOne({_id: id})
-//     console.log(user)
-//   }
-
-// eliminar("60ea1bc74ba8631174609e23")  
-
+// Routes
 app.use('/', require('./routes/UserRoute.js'))
+app.use('/', require('./routes/PublicationRoute.js'))
+app.use('/', require('./routes/CourseRoute.js'))
+app.use('/', require('./routes/FilesRoute.js'))
 
-const PORT = 3000
-app.listen(PORT, () => {
-    console.log(`localhost:${PORT}`)
-})
+// Starting the server
+app.listen(app.get('port'), () => {
+    console.log(`Localhost:${app.get('port')}`);
+});
+
