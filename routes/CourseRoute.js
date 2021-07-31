@@ -35,6 +35,7 @@ router.get('/api/courses/created/:id', async (req, res) =>{
 //GET My Courses
 router.get('/api/courses/join/:id', async (req, res) =>{
     const user = await userModel.findById(req.params.id)
+    
     let coursesList= []
     for (const courseID of user.mycourses) {
         const course = await coursesModel.findById(courseID)
