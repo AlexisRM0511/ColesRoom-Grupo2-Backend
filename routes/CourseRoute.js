@@ -33,10 +33,22 @@ router.get("/api/courses/created/:id", async (req, res) => {
 });
 
 //GET My Courses
-router.get('/api/courses/join/:id', async (req, res) =>{
-    const user = await userModel.findById(req.params.id)
-    console.log(user.mycourses)
-    res.json(user.mycourses)
+router.get('/api/courses/join/:id', async (req, res) => {
+  const user = await userModel.findById(req.params.id);
+  let coursesList = [];
+
+  for (const courseID of user.mycourses) {
+    const course = await coursesModel.findById(courseID);
+    coursesList.push(course);
+  }
+  res.json(coursesList);
+});
+
+//GET My Courses
+router.get('/api/course/join/:id', async (req, res) =>{
+  const user = await userModel.findById(req.params.id)
+  console.log(user.mycourses)
+  res.json(user.mycourses)
 });
 
 //Join Course
@@ -98,21 +110,21 @@ router.post("/api/add", async (req, res) => {
 
 //CREATE Course  
 router.post('/api/CreateCourse', async (req, res) => {
-    const { name, category, description,image, user_id } = req.body;
-    const course = new coursesModel({ name, category, description, user_id, image})
-    let newCoursesCreated= []
-    let courseID
-    await course.save().then(async c => courseID=c._id)
-    await userModel.findById(course.user_id).then(u => {
-        newCoursesCreated = u.coursecreated
-        newCoursesCreated.push(courseID)
-    })
-    await userModel.findByIdAndUpdate( course.user_id, {
-        $set: {
-            coursecreated:newCoursesCreated
-        }
-    })
-    res.json({ status: 'Curso Creado!' })
+  const { name, category, description, image, user_id } = req.body;
+  const course = new coursesModel({ name, category, description, user_id, image })
+  let newCoursesCreated = []
+  let courseID
+  await course.save().then(async c => courseID = c._id)
+  await userModel.findById(course.user_id).then(u => {
+    newCoursesCreated = u.coursecreated
+    newCoursesCreated.push(courseID)
+  })
+  await userModel.findByIdAndUpdate(course.user_id, {
+    $set: {
+      coursecreated: newCoursesCreated
+    }
+  })
+  res.json({ status: 'Curso Creado!' })
 });
 
 // UPDATE Course
