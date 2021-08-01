@@ -6,6 +6,7 @@ const app = express()
 const multer = require('multer');
 const uuid = require('uuid');
 const { format } = require('timeago.js');
+require("dotenv").config();
 
 const mongoose = require('mongoose');
 
@@ -60,7 +61,7 @@ app.use('/', require('./routes/CourseRoute.js'))
 app.use('/', require('./routes/FilesRoute.js'))
 
 // Starting the server
-app.listen(app.get('port'), () => {
-    console.log(`Localhost:${app.get('port')}`);
+app.listen(process.env.PORT || app.get('port'), () => {
+    console.log(`CONNECTED`);
 });
 
