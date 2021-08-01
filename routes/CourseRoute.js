@@ -61,39 +61,33 @@ router.post("/api/add", async (req, res) => {
   let newarray = [];
   const { Email, courseID } = req.body;
   const userAdd = await userModel.findOne({ email: Email }).then((u) => {
-    if (u == {}) {
-      studentID = 0;
-    } else {
+
       studentID = u._id;
-    }
-  });
-  if (studentID != 0) {
+    }).catch(error => console.error(error));
     const curso = await coursesModel.findById(courseID).then((u2) => {
       newarray = u2.students;
       newarray.push(studentID);
-    });
+    }).catch(error => console.error(error))
     await coursesModel.findByIdAndUpdate(courseID, {
       $set: {
         students: newarray,
       },
-    });
+    }).catch(error => console.error(error))
     let newMyCourses = [];
     await userModel.findById(studentID).then((u4) => {
       newMyCourses = u4.mycourses;
       newMyCourses.push(courseID);
-    });
+    }).catch(error => console.error(error))
     await userModel.findByIdAndUpdate(studentID, {
       $set: {
         mycourses: newMyCourses,
       },
-    });
+    }).catch(error => console.error(error))
     res.json({ status: "Se unio!" });
     res.json({ status: "terminado!" });
     console.log(newarray);
     console.log(studentID);
-  } else {
-    console.log("no existe usuario");
-  }
+  
 });
 
 //CREATE Course  
