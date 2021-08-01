@@ -18,9 +18,6 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(()=> console.log('conectado a mongodb')) 
   .catch(e => console.log('error de conexión', e))
 
-
-
-
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
