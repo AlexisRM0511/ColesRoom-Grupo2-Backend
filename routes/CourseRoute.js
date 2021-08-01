@@ -35,13 +35,8 @@ router.get('/api/courses/created/:id', async (req, res) =>{
 //GET My Courses
 router.get('/api/courses/join/:id', async (req, res) =>{
     const user = await userModel.findById(req.params.id)
-    
-    let coursesList= []
-    for (const courseID of user.mycourses) {
-        const course = await coursesModel.findById(courseID)
-        coursesList.push(course)
-    }
-    res.json(coursesList)
+    console.log(user.mycourses)
+    res.json(user.mycourses)
 });
 
 //Join Course
@@ -64,10 +59,8 @@ router.post('/api/join', async (req, res) => {
 
 //CREATE Course  
 router.post('/api/CreateCourse', async (req, res) => {
-    const { name, category, description, user_id } = req.body;
-    let rdmImg = Math.floor(Math.random() * 3) + 1;
-    rdmImg = 'f' + rdmImg;
-    const course = new coursesModel({ name, category, description, user_id, image : rdmImg })
+    const { name, category, description,image, user_id } = req.body;
+    const course = new coursesModel({ name, category, description, user_id, image})
     let newCoursesCreated= []
     let courseID
     await course.save().then(async c => courseID=c._id)
