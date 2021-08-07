@@ -1,7 +1,6 @@
 const { Router } = require('express');
 
 const path = require('path');
-const { unlink } = require('fs-extra');
 const router = Router();
 
 // Models
@@ -18,35 +17,38 @@ router.post('/upload', async (req, res) => {
     });      
     
     let id = ''
-    await fileModel.save().then(file => id = file._id);
+    const asas = new Promise(fileModel.save().then(file => id = file._id))
+    await asas
     res.json({file: fileModel, fileID: id})
 });
 
-router.post('/file', async (req, res) => {
-    const { files } = req.body;   
 
-    const filesData = await FileModel.find({ _id: { $in: files } });;
+router.post('/file', async (req, res) => {
+    const { files } = req.body;
+    const filesData = new Promise(FileModel.find({ _id: { $in: files } }))
+    await filesData
     res.json(filesData);
 });
 
 router.get('/file/:id', async (req, res) => {
     const { id } = req.params;
-    const file = await FileModel.findById(id);
+    const file = new Promise(FileModel.findById(id))
+    await file
     res.json(file);
 });
 
 router.delete('/file/:id/delete', async (req, res) => {
     const { id } = req.params;
     console.log(id)
-    const fileDeleted = await FileModel.findByIdAndDelete(id);
-    //await unlink(path.resolve('./src/public' + fileDeleted.path));
+    const coursesasas = new Promise(FileModel.findByIdAndDelete(id))
+    await coursesasas
     res.json({status: 'ok'})
 });
 
 router.delete('/file/deleteAll', async (req, res) => {
     const { filesIds } = req.body;
-    const filesDeleted = await FileModel.deleteMany({_id: { $in: filesIds }});
-    //await unlink(path.resolve('./src/public' + fileDeleted.path));
+    const asasassa= new Promise(FileModel.deleteMany({ _id: { $in: filesIds } }))
+    await asasassa
     res.json({status: 'ok'})
 });
 

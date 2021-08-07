@@ -7,12 +7,14 @@ const { response } = require('express');
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    const userExists = await userModel.findOne({ email })
+    const userExists = new Promise(userModel.findOne({ email }))
+    await userExists
     if (!userExists) {
         res.status(404).json({ error: 'auth/user-not-found' })
     }
     else {
-        const correctPass = await userModel.findOne({ password })
+        const correctPass = new Promise( userModel.findOne({ password }))
+        await correctPass
         if (!correctPass) {
             res.status(404).json({ error: 'auth/wrong-password' })
         }
@@ -29,7 +31,8 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {  
     const { name, surname, email, password } = req.body;
     
-    const emailExists = await userModel.findOne({ email })
+    const emailExists = new Promise( userModel.findOne({ email }))
+    await emailExists
     if (emailExists) {
         res.status(404).json({ error: 'auth/email-already-exists' })
     }
@@ -41,14 +44,15 @@ router.post('/register', async (req, res) => {
             password
         })
         let idUser = ''
-        await user.save().then(u => idUser = u._id);        
-        
+        const awa=new Promise( user.save().then(u => idUser = u._id))
+        await awa
         res.json({ status: 'ok', id: idUser })       
     }
 });
 
 router.get('/teacher/:id', async (req, res) => {   
-    const teacher = await userModel.findById(req.params.id);   
+    const teacher = new Promise(userModel.findById(req.params.id))
+    await teacher
     res.json(teacher);
 });
 

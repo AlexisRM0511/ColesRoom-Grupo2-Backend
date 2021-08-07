@@ -7,29 +7,25 @@ const tasksModel = require('../models/Tasks');
 router.post('/api/tasks', async (req, res) => {
     const { user_id, publication_id, content, route } = req.body;
     const task = new tasksModel({
-        user_id, publication_id, content, route  
+        user_id, publication_id, content, route
     });
-    
+
     await task.save()
 
-    res.json({ status: 'ok'})
+    res.json({ status: 'ok' })
 });
 
 router.post('/editTasks', async (req, res) => {
-    const { user_id, publication_id, content, route,_id } = req.body;
+    const { _id } = req.body;
 
-    const user = await tasksModel.updateOne({_id: _id}, {
-           $set: {
-                 name: '',
-                 email: '',
-                 password: ''
-               }
-             }) 
-});
-
-router.post('/deleteTasks', async (req, res) => {
-    const  {_id} = req.body;
-    const user = await tasksModel.deleteOne({_id: id})
+    const aaaas = new Promise(tasksModel.updateOne({ _id: _id }, {
+        $set: {
+            name: '',
+            email: '',
+            password: ''
+        }
+    }))
+    await aaaas
 });
 
 module.exports = router;
