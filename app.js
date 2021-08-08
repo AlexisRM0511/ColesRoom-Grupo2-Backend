@@ -6,6 +6,7 @@ const app = express()
 const multer = require('multer');
 const uuid = require('uuid');
 const { format } = require('timeago.js');
+require("dotenv").config();
 
 const mongoose = require('mongoose');
 
@@ -18,13 +19,18 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(()=> console.log('conectado a mongodb')) 
   .catch(e => console.log('error de conexión', e))
 
-
-
-
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(express.json());
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+    next();
+});
 
 // Settings 
 app.set('port', process.env.PORT || 3000);
@@ -55,7 +61,7 @@ app.use('/', require('./routes/CourseRoute.js'))
 app.use('/', require('./routes/FilesRoute.js'))
 
 // Starting the server
-app.listen(app.get('port'), () => {
-    console.log(`Localhost:${app.get('port')}`);
+app.listen(process.env.PORT || app.get('port'), () => {
+    console.log(`CONNECTED`);
 });
 

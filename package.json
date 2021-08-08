@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start" : "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
     "webpack": "webpack --mode development --watch"
@@ -15,6 +16,7 @@
     "@babel/runtime": "^7.14.8",
     "bcrypt": "^5.0.1",
     "css-loader": "^5.2.6",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "file-loader": "^6.2.0",
     "fs-extra": "^10.0.0",

@@ -52,4 +52,22 @@ router.get('/teacher/:id', async (req, res) => {
     res.json(teacher);
 });
 
+router.delete('/user/deleteuser', async (req, res) => {
+    const { user_id, course_id } = req.body
+    let newMyCourses = [];
+    await userModel.findById(user_id).then((u) => {
+        newMyCourses = u.coursecreated;
+        let i = newMyCourses.indexOf(course_id);
+        if (i !== -1) {
+            newMyCourses.splice(i, 1);
+        }
+    })
+     await userModel.findByIdAndUpdate(user_id, {
+        $set: {
+            mycourses: newMyCourses,
+        },
+    })
+    res.json({ status: "HOLA" })
+})
+
 module.exports = router;
