@@ -5,9 +5,9 @@ const { response } = require('express');
 const tasksModel = require('../models/Tasks');
 
 router.post('/api/tasks', async (req, res) => {
-    const { user_id, publication_id, content, route } = req.body;
-    const task = new tasksModel({
-        user_id, publication_id, content, route
+    const { course_id, type, content, route } = req.body;
+    const task = new publicationModel({
+        course_id, publication_id, content
     });
 
     await task.save()
