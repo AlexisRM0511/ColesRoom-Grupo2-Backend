@@ -81,26 +81,30 @@ router.post("/api/add", async (req, res) => {
   let newarray = [];
   const { Email, courseID, teacherID } = req.body;
   const usera = new Promise(userModel.findOne({ email: Email }).then((u) => {
-    u === null 
-    ? studentID = 0 
-    : studentID = u._id;    
-    
+    if (u === null) {
+      studentID = 0
+    } else {
+      studentID = u._id
+    }
   }))
   await usera
   if (studentID != 0) {
     const ola1 = new Promise(coursesModel.findById(courseID).then((u2) => {
-  if (studentID.toString() === teacherID) {   
-    studentID = 1;
-  } 
+      if (studentID.toString() === teacherID) {
+        studentID = 1;
+      }
+    }))
+    await ola1
+  }
   console.log(studentID, teacherID)
-  if (studentID !== 0 && studentID !== 1) {
+  if (studentID != 0 && studentID != 1) {
     console.log("ENTRE")
-    const ola1 = await coursesModel.findById(courseID).then((u2) => {
+    const ola1 = new Promise(coursesModel.findById(courseID).then((u2) => {
       newarray = u2.students;
       newarray.push(studentID);
     }))
     await ola1
-    const olas = new Promise(oursesModel.findByIdAndUpdate(courseID, {
+    const olas = new Promise(coursesModel.findByIdAndUpdate(courseID, {
       $set: {
         students: newarray,
       },
@@ -119,15 +123,15 @@ router.post("/api/add", async (req, res) => {
 
     }))
     await as
-    res.json({ status: "OK" });   
-    
-  } else if (studentID === 0) {
-    res.json({error: "No existe ese usuario"});
+    res.json({ status: "OK" });
+
+  } else if (studentID == 0) {
+    res.json({ error: "No existe ese usuario" });
   }
-  else if (studentID === 1) {
-    res.json({error: "No te puedes añadir a ti mismo"});
+  else if (studentID == 1) {
+    res.json({ error: "No te puedes añadir a ti mismo" });
   }
-});
+})
 
 //CREATE Course  
 router.post('/api/CreateCourse', async (req, res) => {
