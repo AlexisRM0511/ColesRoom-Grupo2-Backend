@@ -18,21 +18,6 @@ router.post('/api/publications', async (req, res) => {
     res.json(publication)
 });
 
-router.post('/api/tasks', async (req, res) => {    
-    const publication = req.body;
-    const { content, type, route, course_id } = publication;
-    const publi = new publicationsModel({
-        course_id,
-        type,
-        content,        
-        route       
-    });
-    await publi.save().then(p => publication._id = p._id)
-
-    res.json(publication)
-});
-
-
 router.put('/api/publications/:id', async (req, res) => {
     const { id } = req.params;    
     const { content, files } = req.body;    
