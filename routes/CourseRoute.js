@@ -77,19 +77,25 @@ router.post("/api/join", async (req, res) => {
 })
 //add Student
 router.post("/api/add", async (req, res) => {
-  let studentID = null;
+  let studentID = "";
   let newarray = [];
-  const { Email, courseID } = req.body;
+  const { Email, courseID, teacherID } = req.body;
   const usera = new Promise(userModel.findOne({ email: Email }).then((u) => {
-    if (u == {}) {
-      studentID = 0;
-    } else {
-      studentID = u._id;
-    }
+    u === null 
+    ? studentID = 0 
+    : studentID = u._id;    
+    
   }))
   await usera
   if (studentID != 0) {
     const ola1 = new Promise(coursesModel.findById(courseID).then((u2) => {
+  if (studentID.toString() === teacherID) {   
+    studentID = 1;
+  } 
+  console.log(studentID, teacherID)
+  if (studentID !== 0 && studentID !== 1) {
+    console.log("ENTRE")
+    const ola1 = await coursesModel.findById(courseID).then((u2) => {
       newarray = u2.students;
       newarray.push(studentID);
     }))
@@ -110,14 +116,16 @@ router.post("/api/add", async (req, res) => {
       $set: {
         mycourses: newMyCourses,
       },
+
     }))
     await as
-    res.json({ status: "Se unio!" });
-    res.json({ status: "terminado!" });
-    console.log(newarray);
-    console.log(studentID);
-  } else {
-    console.log("no existe usuario");
+    res.json({ status: "OK" });   
+    
+  } else if (studentID === 0) {
+    res.json({error: "No existe ese usuario"});
+  }
+  else if (studentID === 1) {
+    res.json({error: "No te puedes añadir a ti mismo"});
   }
 });
 
