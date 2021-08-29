@@ -13,33 +13,36 @@ router.post('/api/publications', async (req, res) => {
         content,        
         route       
     });
-    await publi.save().then(p => publication._id = p._id)
-
+    const olas= new Promise( publi.save().then(p => publication._id = p._id))
+    await olas
     res.json(publication)
 });
 
 router.put('/api/publications/:id', async (req, res) => {
     const { id } = req.params;    
     const { content, files } = req.body;    
-    const publi = await publicationsModel.findByIdAndUpdate(id, {
+    const publi = new Promise( publicationsModel.findByIdAndUpdate(id, {
         $set: {
             content,
             route: files,
         }
-    });
+    }))
+    await publi
     res.json(publi);
 });
 
 router.delete('/api/publications/:id', async (req, res) => {
 
     const { id } = req.params;
-    const publi = await publicationsModel.findByIdAndRemove(id);    
+    const publi = new Promise(publicationsModel.findByIdAndRemove(id))
+    await publi
     res.json(publi);
 });
 
 router.get('/api/publications/:idcourse', async (req, res) => {    
     let id = req.params.idcourse;
-    let publications = await publicationsModel.find( {course_id: id} );
+    let publications = new Promise(publicationsModel.find({ course_id: id }))
+    await publications
     res.json(publications);
 });
 

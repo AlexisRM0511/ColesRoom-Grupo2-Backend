@@ -11,22 +11,26 @@ const { findById } = require("../models/User.js");
 
 //Get All Courses
 router.get("/api/courses", async (req, res) => {
-  const courses = await coursesModel.find();
+  const courses = new Promise(coursesModel.find())
+  await courses
   res.json(courses);
 });
 
 // GET Course
 router.get("/api/courses/:id", async (req, res) => {
-  const course = await coursesModel.findById(req.params.id);
+  const course = new Promise(coursesModel.findById(req.params.id))
+  await course
   res.json(course);
 });
 
 //GET Courses Created
 router.get("/api/courses/created/:id", async (req, res) => {
-  const user = await userModel.findById(req.params.id);
+  const user = new Promise(userModel.findById(req.params.id))
+  await user
   var coursesList = [];
   for (const courseID of user.coursecreated) {
-    const course = await coursesModel.findById(courseID);
+    const course = new Promise(coursesModel.findById(courseID))
+    await course
     coursesList.push(course);
   }
   res.json(coursesList);
@@ -34,19 +38,22 @@ router.get("/api/courses/created/:id", async (req, res) => {
 
 //GET My Courses
 router.get('/api/courses/join/:id', async (req, res) => {
-  const user = await userModel.findById(req.params.id);
+  const user = new Promise(userModel.findById(req.params.id))
+  await user
   let coursesList = [];
 
   for (const courseID of user.mycourses) {
-    const course = await coursesModel.findById(courseID);
+    const course = new Promise(coursesModel.findById(courseID))
+    await course
     coursesList.push(course);
   }
   res.json(coursesList);
 });
 
 //GET My Courses
-router.get('/api/course/join/:id', async (req, res) =>{
-  const user = await userModel.findById(req.params.id)
+router.get('/api/course/join/:id', async (req, res) => {
+  const user = new Promise(userModel.findById(req.params.id))
+  await user
   console.log(user.mycourses)
   res.json(user.mycourses)
 });
@@ -55,58 +62,63 @@ router.get('/api/course/join/:id', async (req, res) =>{
 router.post("/api/join", async (req, res) => {
   const { userID, courseID } = req.body;
   let newMyCourses = [];
-  await userModel.findById(userID).then((u) => {
+  const userj = new Promise(userModel.findById(userID).then((u) => {
     newMyCourses = u.mycourses;
     newMyCourses.push(courseID);
-  });
-  await userModel.findByIdAndUpdate(userID, {
+  }))
+  await userj
+  const userg = new Promise(userModel.findByIdAndUpdate(userID, {
     $set: {
       mycourses: newMyCourses,
     },
-  });
+  }))
+  await userg
   res.json({ status: "Se unio!" });
-});
-
+})
 //add Student
 router.post("/api/add", async (req, res) => {
   let studentID = "";
   let newarray = [];
   const { Email, courseID, teacherID } = req.body;
-  
-  const userAdd = await userModel.findOne({ email: Email }).then((u) => {    
+  const usera = new Promise(userModel.findOne({ email: Email }).then((u) => {
     u === null 
     ? studentID = 0 
     : studentID = u._id;    
     
-  });
-  
-  //studentID = String(studentID)
-
+  }))
+  await usera
+  if (studentID != 0) {
+    const ola1 = new Promise(coursesModel.findById(courseID).then((u2) => {
   if (studentID.toString() === teacherID) {   
     studentID = 1;
   } 
   console.log(studentID, teacherID)
   if (studentID !== 0 && studentID !== 1) {
     console.log("ENTRE")
-    const curso = await coursesModel.findById(courseID).then((u2) => {
+    const ola1 = await coursesModel.findById(courseID).then((u2) => {
       newarray = u2.students;
       newarray.push(studentID);
-    });
-    await coursesModel.findByIdAndUpdate(courseID, {
+    }))
+    await ola1
+    const olas = new Promise(oursesModel.findByIdAndUpdate(courseID, {
       $set: {
         students: newarray,
       },
-    });
+    }))
+    await olas
     let newMyCourses = [];
-    await userModel.findById(studentID).then((u4) => {
+    const ol = new Promise(userModel.findById(studentID).then((u4) => {
       newMyCourses = u4.mycourses;
       newMyCourses.push(courseID);
-    });
-    await userModel.findByIdAndUpdate(studentID, {
+    }))
+    await ol
+    const as = new Promise(userModel.findByIdAndUpdate(studentID, {
       $set: {
         mycourses: newMyCourses,
       },
-    });
+
+    }))
+    await as
     res.json({ status: "OK" });   
     
   } else if (studentID === 0) {
@@ -123,71 +135,81 @@ router.post('/api/CreateCourse', async (req, res) => {
   const course = new coursesModel({ name, category, description, user_id, image })
   let newCoursesCreated = []
   let courseID
-  await course.save().then(async c => courseID = c._id)
-  await userModel.findById(course.user_id).then(u => {
+  const awaw = new Promise(course.save().then(async c => courseID = c._id))
+  await awaw
+  const asw = new Promise(userModel.findById(course.user_id).then(u => {
     newCoursesCreated = u.coursecreated
     newCoursesCreated.push(courseID)
-  })
-  await userModel.findByIdAndUpdate(course.user_id, {
+  }))
+  await asw
+  const ewe = new Promise(userModel.findByIdAndUpdate(course.user_id, {
     $set: {
       coursecreated: newCoursesCreated
     }
-  })
+  }))
+  await ewe
   res.json({ status: 'Curso Creado!' })
 });
 
 // UPDATE Course
 router.put("/api/courses/:id", async (req, res) => {
   const { name, description, image, category } = req.body;
-  const c = await coursesModel.findByIdAndUpdate(req.params.id, {
+  const c = new Promise(coursesModel.findByIdAndUpdate(req.params.id, {
     $set: {
       name,
       category,
       description,
       image,
     },
-  });
-
-  res.json(c);
+  }))
+  await c
+  res.json(c)
 });
 
 // DELETE Course
 router.delete("/api/courses/:id", async (req, res) => {
-  const course = await coursesModel.findById(req.params.id);
+  const course = new Promise(coursesModel.findById(req.params.id))
+  await course
   let newCoursesCreated = [];
-  await userModel.findById(course.user_id).then((u) => {
+  const awaw = new Promise(userModel.findById(course.user_id).then((u) => {
     newCoursesCreated = u.coursecreated;
-    var i = newCoursesCreated.indexOf(req.params.id);
+    let i = newCoursesCreated.indexOf(req.params.id);
     if (i !== -1) {
       newCoursesCreated.splice(i, 1);
     }
-  });
-  await userModel.findByIdAndUpdate(course.user_id, {
+  }))
+  await awaw
+  const awawaw = new Promise(userModel.findByIdAndUpdate(course.user_id, {
     $set: {
       coursecreated: newCoursesCreated,
     },
-  });
+  }))
+  await awawaw
   let newMyCourses = [];
-  const users = await userModel.find();
+  const users = new Promise(userModel.find())
+  await users
   for (const user of users) {
-    var i = user.mycourses.indexOf(req.params.id);
+    let i = user.mycourses.indexOf(req.params.id);
     if (i !== -1) {
       newMyCourses.splice(i, 1);
     }
-    await userModel.findByIdAndUpdate(user._id, {
+    const aswww = new Promise(userModel.findByIdAndUpdate(user._id, {
       $set: {
         mycourses: newMyCourses,
       },
-    });
+    }))
+    await aswww
   }
-  await coursesModel.findByIdAndRemove(req.params.id);
-  const deletedPublications = await publicationModel.find({
+  const assss = new Promise(coursesModel.findByIdAndRemove(req.params.id))
+  await assss
+  const deletedPublications = new Promise(publicationModel.find({
     course_id: req.params.id,
-  });
-  await publicationModel.deleteMany({ course_id: req.params.id });
-  //await taskModel.deleteMany({ course_id: req.params.id });
+  }))
+  await deletedPublications
+  const aaaaaaa = new Promise(publicationModel.deleteMany({ course_id: req.params.id }))
+  await aaaaaaa
   console.log(deletedPublications);
   res.json(deletedPublications);
-});
+})
 
 module.exports = router;
