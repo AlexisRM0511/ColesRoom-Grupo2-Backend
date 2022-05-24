@@ -9,6 +9,8 @@ const taskModel = require("../models/Tasks.js");
 const fileModel = require("../models/File.js");
 const { findById } = require("../models/User.js");
 
+//MODIFICACION PENDIENTE - EDDY ORTEGA
+//CAMBIO DE GET A POST
 //Get All Courses
 router.get("/api/courses", async (req, res) => {
   const courses = await coursesModel.find();
