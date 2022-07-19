@@ -10,11 +10,11 @@ require("dotenv").config();
 
 const mongoose = require('mongoose');
 
-const usuario = "prueba_prueba"
-const password = "prueba_prueba"
-const dbName = "test"
+const usuario = "colesroom"
+const password = "colesroom"
+const dbName = "colesroom"
 // Db connection
-const uri = `mongodb+srv://prueba_prueba:${password}@clustercolesroom.owdjh.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${usuario}:${password}@limachay.85rxfwl.mongodb.net/${dbName}?retryWrites=true&w=majority`
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(()=> console.log('conectado a mongodb')) 
   .catch(e => console.log('error de conexión', e))
